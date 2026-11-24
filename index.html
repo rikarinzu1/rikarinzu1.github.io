@@ -1,6 +1,138 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IZEA Games</title>
-<style>body{margin:0;font:16px/1.6 -apple-system,system-ui,sans-serif;background:#1f1c18;color:#fff}main{max-width:720px;margin:0 auto;padding:60px 22px}h1{font-size:40px;margin:0;color:#f26b1d}.c{background:#2b2620;border-radius:16px;padding:18px;margin:16px 0}a{color:#ffb400}</style></head>
-<body><main><h1>IZEA Games</h1><p>Mobil oyunlar · Mobile games</p>
-<div class="c"><b>Şantiye Holding</b><br>İnşaat imparatorluğunu kur. · <a href="https://apps.apple.com/app/id6837179395">App Store</a> · <a href="https://claude.ai/artifact/JbRmpbFsozdDtnTxQSvGw4">Gizlilik / Privacy</a></div>
-<div class="c"><b>Pop It!</b><br>Mısırları patlat!</div>
-<p>İletişim · Contact: <a href="mailto:destek@izeagames.com">destek@izeagames.com</a></p></main></body></html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IZEA Games — Mobil Oyunlar</title>
+<meta name="description" content="IZEA Games: Şantiye Holding, Pop It! ve daha fazlası. Bağımsız mobil oyun stüdyosu.">
+<meta property="og:title" content="IZEA Games">
+<meta property="og:description" content="Bağımsız mobil oyun stüdyosu · Independent mobile game studio">
+<meta property="og:image" content="https://izeagames.com/santiye.png">
+<link rel="icon" href="santiye.png">
+<style>
+:root{--bg:#14110e;--card:#1f1a15;--line:#2f2820;--txt:#f5efe8;--mut:#a89c8f;--or:#ff6b1a;--yl:#ffc23d}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+nav{position:sticky;top:0;z-index:10;background:rgba(20,17,14,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-weight:800;font-size:20px;letter-spacing:.5px}
+.logo span{color:var(--or)}
+nav .links{display:flex;gap:22px;font-size:15px;color:var(--mut)}
+nav .links a:hover{color:var(--txt)}
+.lang{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;background:none;color:var(--txt);font:inherit;font-size:13px}
+header{position:relative;overflow:hidden;padding:110px 0 90px;text-align:center}
+header:before{content:"";position:absolute;inset:-40% -20% auto;height:600px;background:radial-gradient(closest-side,rgba(255,107,26,.35),transparent),radial-gradient(closest-side at 70% 60%,rgba(255,194,61,.18),transparent);filter:blur(20px);z-index:-1}
+.tag{display:inline-block;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--mut);margin-bottom:22px}
+h1{font-size:clamp(40px,7vw,76px);line-height:1.05;margin:0 0 18px;font-weight:800;letter-spacing:-1.5px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{max-width:560px;margin:0 auto 34px;color:var(--mut);font-size:18px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--or);color:#fff;font-weight:700;padding:14px 26px;border-radius:14px;transition:transform .15s,box-shadow .15s;box-shadow:0 8px 24px rgba(255,107,26,.3)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,107,26,.45)}
+.btn.ghost{background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--txt)}
+section{padding:70px 0}
+h2{font-size:34px;margin:0 0 8px;letter-spacing:-.5px}
+.sub{color:var(--mut);margin:0 0 36px}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.game{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:16px;transition:transform .2s,border-color .2s}
+.game:hover{transform:translateY(-4px);border-color:#4a3c2e}
+.game .top{display:flex;gap:18px;align-items:center}
+.game img{width:84px;height:84px;border-radius:20px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.game h3{margin:0;font-size:22px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:6px}
+.live{background:rgba(52,199,89,.15);color:#4cd964}
+.soon{background:rgba(255,194,61,.15);color:var(--yl)}
+.game p{margin:0;color:var(--mut);font-size:15px}
+.game .act{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto}
+.game .act a{font-size:14px;font-weight:600;padding:9px 16px;border-radius:11px;border:1px solid var(--line)}
+.game .act a.main{background:var(--txt);color:#000;border-color:var(--txt)}
+.game .act a:hover{border-color:var(--mut)}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.f{border:1px solid var(--line);border-radius:20px;padding:22px}
+.f b{display:block;font-size:17px;margin:8px 0 4px}
+.f span{color:var(--mut);font-size:14px}
+.f i{font-style:normal;font-size:28px}
+.contact{background:linear-gradient(135deg,#2a1a0f,#1f1a15);border:1px solid var(--line);border-radius:28px;padding:48px;text-align:center}
+.contact h2{margin-bottom:10px}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+footer a:hover{color:var(--txt)}
+@media(max-width:640px){nav .links a.hide{display:none}header{padding:70px 0 60px}.contact{padding:32px 20px}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#">IZEA <span>Games</span></a>
+  <div class="links">
+    <a class="hide" href="#oyunlar" data-tr="Oyunlar" data-en="Games">Oyunlar</a>
+    <a class="hide" href="#iletisim" data-tr="İletişim" data-en="Contact">İletişim</a>
+    <button class="lang" id="lang">EN</button>
+  </div>
+</div></nav>
+
+<header><div class="wrap">
+  <div class="tag" data-tr="🎮 Bağımsız mobil oyun stüdyosu" data-en="🎮 Independent mobile game studio">🎮 Bağımsız mobil oyun stüdyosu</div>
+  <h1 data-tr="Oynaması kolay,<br><em>bırakması zor.</em>" data-en="Easy to play,<br><em>hard to put down.</em>">Oynaması kolay,<br><em>bırakması zor.</em></h1>
+  <p data-tr="IZEA Games, cebinde taşıyabileceğin eğlenceli ve sade mobil oyunlar geliştirir." data-en="IZEA Games makes fun, simple mobile games you can carry in your pocket.">IZEA Games, cebinde taşıyabileceğin eğlenceli ve sade mobil oyunlar geliştirir.</p>
+  <a class="btn" href="#oyunlar" data-tr="Oyunlarımız →" data-en="Our games →">Oyunlarımız →</a>
+</div></header>
+
+<section id="oyunlar"><div class="wrap">
+  <h2 data-tr="Oyunlarımız" data-en="Our Games">Oyunlarımız</h2>
+  <p class="sub" data-tr="App Store'da indir, hemen oynamaya başla." data-en="Download on theApp Store and start playing.">App Store'da indir, hemen oynamaya başla.</p>
+  <div class="games">
+    <div class="game">
+      <div class="top"><img src="santiye.png" alt="Şantiye Holding">
+        <div><h3>Şantiye Holding</h3><span class="pill live" data-tr="● Yayında" data-en="● Live">● Yayında</span></div></div>
+      <p data-tr="Küçük bir müteahhitten dev bir holdinge. Arsa al, bina dik, ihaleleri kazan, şehir şehir büyü, arkadaşlarınla ligde yarış." data-en="From a small contractor to a giant holding. Buy land, build, win tenders, expand city by city and compete with friends in leagues.">Küçük bir müteahhitten dev bir holdinge. Arsa al, bina dik, ihaleleri kazan, şehir şehir büyü, arkadaşlarınla ligde yarış.</p>
+      <div class="act">
+        <a class="main" href="https://apps.apple.com/app/id6837179395" target="_blank" rel="noopener" data-tr="App Store'da indir" data-en=" Download onApp Store">App Store'da indir</a>
+        <a href="https://claude.ai/artifact/JbRmpbFsozdDtnTxQSvGw4" target="_blank" rel="noopener" data-tr="Gizlilik" data-en="Privacy">Gizlilik</a>
+      </div>
+    </div>
+    <div class="game">
+      <div class="top"><img src="popit.png" alt="Pop It!">
+        <div><h3>Pop It!</h3><span class="pill soon" data-tr="● Çok yakında" data-en="● Coming soon">● Çok yakında</span></div></div>
+      <p data-tr="Mısırları patlat, kombo yap, rekorunu kır! Kısa molalar için birebir, rahatlatıcı bir refleks oyunu." data-en="Pop the corn, chain combos, beat your record! A relaxing reflex game perfect for short breaks.">Mısırları patlat, kombo yap, rekorunu kır! Kısa molalar için birebir, rahatlatıcı bir refleks oyunu.</p>
+      <div class="act"><a href="#iletisim" data-tr="Haberdar ol" data-en="Get notified">Haberdar ol</a></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="feat">
+    <div class="f"><i>⚡</i><b data-tr="Hızlı başla" data-en="Jump right in">Hızlı başla</b><span data-tr="Uzun eğitimler yok, açar açmaz oynarsın." data-en="No long tutorials — open and play.">Uzun eğitimler yok, açar açmaz oynarsın.</span></div>
+    <div class="f"><i>🔒</i><b data-tr="Gizliliğe saygı" data-en="Privacy first">Gizliliğe saygı</b><span data-tr="Hesap zorunlu değil, verin sende kalır." data-en="No account required, your data stays yours.">Hesap zorunlu değil, verin sende kalır.</span></div>
+    <div class="f"><i>🇹🇷</i><b data-tr="Türkiye'den" data-en="Made in Türkiye">Türkiye'den</b><span data-tr="Türkçe ve İngilizce, yerel tatlarla." data-en="Turkish & English, with a local flavor.">Türkçe ve İngilizce, yerel tatlarla.</span></div>
+  </div>
+</div></section>
+
+<section id="iletisim"><div class="wrap">
+  <div class="contact">
+    <h2 data-tr="Bize ulaş" data-en="Get in touch">Bize ulaş</h2>
+    <p class="sub" data-tr="Destek, öneri veya iş birliği için yaz, en kısa sürede dönelim." data-en="Write to us for support, feedback or partnerships.">Destek, öneri veya iş birliği için yaz, en kısa sürede dönelim.</p>
+    <a class="btn" href="mailto:destek@izeagames.com">✉️ destek@izeagames.com</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>© 2026 IZEA Games</span>
+  <span><a href="https://claude.ai/artifact/JbRmpbFsozdDtnTxQSvGw4" target="_blank" rel="noopener" data-tr="Gizlilik Politikası" data-en="Privacy Policy">Gizlilik Politikası</a> · <a href="mailto:destek@izeagames.com" data-tr="Destek" data-en="Support">Destek</a></span>
+</div></footer>
+
+<script>
+(function(){
+  var l=(navigator.language||'tr').slice(0,2)==='tr'?'tr':'en';
+  try{var s=localStorage.getItem('lang');if(s)l=s;}catch(e){}
+  var b=document.getElementById('lang');
+  function set(x){l=x;document.documentElement.lang=x;
+    document.querySelectorAll('[data-'+x+']').forEach(function(e){e.innerHTML=e.getAttribute('data-'+x);});
+    b.textContent=x==='tr'?'EN':'TR';try{localStorage.setItem('lang',x);}catch(e){}}
+  b.onclick=function(){set(l==='tr'?'en':'tr');};
+  set(l);
+})();
+</script>
+</body>
+</html>
