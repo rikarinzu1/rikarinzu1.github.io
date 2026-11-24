@@ -59,6 +59,10 @@ h2{font-size:34px;margin:0 0 8px;letter-spacing:-.5px}
 footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
 footer a:hover{color:var(--txt)}
+.herovid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.28}
+header .shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(20,17,14,.55),var(--bg) 95%)}
+.trailer{border-radius:24px;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5);background:#000}
+.trailer video{display:block;width:100%;height:auto}
 @media(max-width:640px){nav .links a.hide{display:none}header{padding:70px 0 60px}.contact{padding:32px 20px}}
 </style>
 </head>
@@ -72,7 +76,7 @@ footer a:hover{color:var(--txt)}
   </div>
 </div></nav>
 
-<header><div class="wrap">
+<header><video class="herovid" src="santiye-loop.mp4" autoplay muted loop playsinline poster="santiye-poster.jpg"></video><div class="shade"></div><div class="wrap">
   <div class="tag" data-tr="🎮 Bağımsız mobil oyun stüdyosu" data-en="🎮 Independent mobile game studio">🎮 Bağımsız mobil oyun stüdyosu</div>
   <h1 data-tr="Oynaması kolay,<br><em>bırakması zor.</em>" data-en="Easy to play,<br><em>hard to put down.</em>">Oynaması kolay,<br><em>bırakması zor.</em></h1>
   <p data-tr="IZEA Games, cebinde taşıyabileceğin eğlenceli ve sade mobil oyunlar geliştirir." data-en="IZEA Games makes fun, simple mobile games you can carry in your pocket.">IZEA Games, cebinde taşıyabileceğin eğlenceli ve sade mobil oyunlar geliştirir.</p>
@@ -99,6 +103,12 @@ footer a:hover{color:var(--txt)}
       <div class="act"><a href="#iletisim" data-tr="Haberdar ol" data-en="Get notified">Haberdar ol</a></div>
     </div>
   </div>
+</div></section>
+
+<section id="fragman" style="padding-top:20px"><div class="wrap">
+  <h2 data-tr="Şantiye Holding fragmanı" data-en="Şantiye Holding trailer">Şantiye Holding fragmanı</h2>
+  <p class="sub" data-tr="Oyundan kısa bir bakış." data-en="A quick look at the game.">Oyundan kısa bir bakış.</p>
+  <div class="trailer"><video src="santiye-fragman.mp4" controls playsinline preload="metadata" poster="santiye-poster.jpg"></video></div>
 </div></section>
 
 <section><div class="wrap">
