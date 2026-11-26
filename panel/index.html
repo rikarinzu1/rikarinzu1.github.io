@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Şantiye Holding · Kontrol Paneli</title>
+<style>
+:root{--bg:#14110e;--card:#1f1a15;--line:#2f2820;--txt:#f5efe8;--mut:#a89c8f;--or:#ff6b1a;--ok:#4cd964;--bad:#ff5a4f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(20,17,14,.92);backdrop-filter:blur(10px);z-index:5}
+header b{font-size:18px}header b span{color:var(--or)}
+main{max-width:1100px;margin:0 auto;padding:20px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{background:var(--card);border:1px solid var(--line);color:var(--txt);padding:9px 16px;border-radius:999px;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--or);border-color:var(--or);font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+h2{margin:0 0 4px;font-size:19px}.mut{color:var(--mut);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.f{background:#191510;border:1px solid var(--line);border-radius:12px;padding:12px}
+.f label{display:block;font-weight:700;margin-bottom:2px}
+.f .row{display:flex;gap:8px;align-items:center;margin-top:8px}
+input,textarea,select{width:100%;background:#0f0d0b;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font:inherit}
+input[type=range]{padding:0}
+.val{min-width:64px;text-align:right;font-weight:700;color:var(--or)}
+.btn{background:var(--or);color:#fff;border:0;border-radius:12px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer}
+.btn.gh{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn.sm{padding:6px 12px;font-size:13px}
+table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{color:var(--mut);font-weight:600}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:12px;z-index:9}
+.center{text-align:center;padding:60px 20px}
+.hidden{display:none}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#2a231c;font-size:12px}
+</style>
+</head>
+<body>
+<header><b>Şantiye Holding · <span>Kontrol Paneli</span></b><div id="who" class="mut"></div></header>
+<main>
+  <div id="login" class="card center">
+    <h2>Yönetici girişi</h2>
+    <p class="mut">Sadece destek@izeagames.com hesabıyla girilebilir.</p>
+    <button class="btn" onclick="login()">Google ile giriş yap</button>
+    <p id="loginErr" class="mut" style="color:var(--bad)"></p>
+  </div>
+  <div id="app" class="hidden">
+    <div class="tabs">
+      <button data-t="ayar" class="on">⚙️ Oyun ayarları</button>
+      <button data-t="duyuru">📢 Duyuru</button>
+      <button data-t="hediye">🎁 Hediye gönder</button>
+      <button data-t="sikayet">⚠️ Şikayetler</button>
+      <button data-t="oyuncu">👥 Oyuncular</button>
+    </div>
+
+    <section id="t-ayar">
+      <div class="card"><h2>Oyun ayarları</h2><div class="mut">Değiştirip "Kaydet"e bas. Oyuncuların oyunu 5 dakika içinde ya da bir sonraki açılışta yeni ayarları alır. 1 = normal değer.</div></div>
+      <div class="grid" id="cfgGrid"></div>
+      <div class="card" style="display:flex;gap:10px;justify-content:flex-end"><button class="btn gh" onclick="resetCfg()">Varsayılanlara dön</button><button class="btn" onclick="saveCfg()">💾 Kaydet</button></div>
+    </section>
+
+    <section id="t-duyuru" class="hidden">
+      <div class="card"><h2>Duyuru gönder</h2><div class="mut">Oyunu açan herkese bir kez açılır pencere olarak gösterilir.</div>
+        <div style="margin-top:10px"><select id="annType"><option value="info">📢 Bilgi</option><option value="gift">🎁 Hediye / etkinlik</option><option value="warn">⚠️ Uyarı / bakım</option></select></div>
+        <textarea id="annText" rows="5" style="margin-top:8px" placeholder="Örn: Hafta sonu kupon arsalarda %100 kâr yerine %150 kâr var!"></textarea>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px"><button class="btn gh" onclick="clearAnn()">Duyuruyu kaldır</button><button class="btn" onclick="sendAnn()">Yayınla</button></div>
+        <div id="annNow" class="mut" style="margin-top:8px"></div>
+      </div>
+    </section>
+
+    <section id="t-hediye" class="hidden">
+      <div class="card"><h2>Oyuncuya hediye gönder</h2><div class="mut">Oyuncunun 6 haneli arkadaş kodunu yaz. Oyuncu online olunca hediye kasasına eklenir ve mesajı görür.</div>
+        <div class="grid" style="margin-top:10px">
+          <input id="gCode" maxlength="6" placeholder="Arkadaş kodu (ör. AB3K9P)" style="text-transform:uppercase">
+          <input id="gAmt" type="number" placeholder="Tutar (₺) ör. 50000000">
+        </div>
+        <input id="gMsg" style="margin-top:8px" placeholder="Mesaj (ör. Hata bildirdiğin için teşekkürler!)">
+        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn" onclick="sendGift()">🎁 Gönder</button></div>
+      </div>
+    </section>
+
+    <section id="t-sikayet" class="hidden">
+      <div class="card"><h2>Şikayetler</h2><div class="mut">Oyuncuların bildirdiği firmalar. İnceleyip sil.</div><div id="repList" style="margin-top:10px">Yükleniyor…</div></div>
+    </section>
+
+    <section id="t-oyuncu" class="hidden">
+      <div class="card"><h2>En zengin 50 oyuncu</h2><div id="plList" style="margin-top:10px">Yükleniyor…</div></div>
+    </section>
+  </div>
+</main>
+<script src="fb.js"></script>
+<script>
+const CFG = {apiKey:'AIzaSyBWbBRkC5LyoJmV2fcIjBxqXLt51MKoFP4', authDomain:'santiye-holding.firebaseapp.com', projectId:'santiye-holding', storageBucket:'santiye-holding.firebasestorage.app', messagingSenderId:'1046631651073', appId:'1:1046631651073:web:73b0913ae7ad054a69ed00'};
+const ADMIN = 'destek@izeagames.com';
+const app = FB.initializeApp(CFG), auth = FB.getAuth(app), db = FB.getFirestore(app);
+const FIELDS = [
+  ['machMul','🚜 İş makinesi fiyatları','Satın alma fiyatlarının çarpanı.',.3,3,.05,1],
+  ['rentMul','🚜 Makine kira bedeli','Kiralama fiyatlarının çarpanı.',.3,3,.05,1],
+  ['profitMul','🏗️ İnşaat kârı','Satılan binaların kârı. 0,8 = %20 daha az kâr.',.3,2,.05,1],
+  ['rentIncMul','🏠 Kira geliri','Tüm kira gelirlerinin çarpanı.',.3,3,.05,1],
+  ['megaMul','🏙️ Mega proje geliri','Mega projelerin günlük gelir çarpanı.',.2,5,.1,1],
+  ['offMargin','🏛️ Belediye işi kârı','Rakipsiz belediye işlerinin kâr çarpanı.',.2,3,.1,1],
+  ['kupMin','🎟️ Kupon arsa açık kalma süresi (dk)','Her kupon arsa kaç dakika teklife açık kalsın.',5,60,1,15],
+  ['bribeRisk','🕵️ Rüşvet soruşturma riski','İhalede rüşvet verenin yakalanma ihtimali çarpanı.',0,3,.1,1],
+  ['eventMul','⚡ Arıza ve şikayet sıklığı','Bina olaylarının sıklık çarpanı. 2 = iki kat sık.',.2,4,.1,1],
+  ['dailyMul','🎯 Günlük görev ödülü','Günlük görev ödüllerinin çarpanı.',.2,5,.1,1],
+  ['adMul','📺 "Reklam izle, kazan" ödülü','Ödüllü reklam bonusunun çarpanı.',.2,5,.1,1]
+];
+let cur = {};
+const $ = id => document.getElementById(id);
+function toast(m){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
+const fmt = n => (+n||0).toLocaleString('tr-TR') + ' ₺';
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function login(){ $('loginErr').textContent = ''; try { await FB.signInWithPopup(auth, new FB.GoogleAuthProvider()); } catch(e){ $('loginErr').textContent = 'Giriş yapılamadı: ' + (e.code || e.message); } }
+function logout(){ FB.signOut(auth); }
+FB.onAuthStateChanged(auth, u => {
+  if (u && u.email === ADMIN){ $('login').classList.add('hidden'); $('app').classList.remove('hidden'); $('who').innerHTML = esc(u.email) + ' · <a href="#" style="color:#ff6b1a" onclick="logout();return false">çıkış</a>'; loadCfg(); }
+  else { $('app').classList.add('hidden'); $('login').classList.remove('hidden'); $('who').textContent = ''; if (u){ $('loginErr').textContent = u.email + ' yönetici değil.'; FB.signOut(auth); } }
+});
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x===b));
+  document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+  $('t-' + b.dataset.t).classList.remove('hidden');
+  if (b.dataset.t==='sikayet') loadReports(); if (b.dataset.t==='oyuncu') loadPlayers(); if (b.dataset.t==='duyuru') showAnn();
+});
+async function loadCfg(){
+  try { const s = await FB.getDoc(FB.doc(db, 'config', 'live')); cur = s.exists() ? s.data() : {}; } catch(e){ cur = {}; toast('Ayarlar okunamadı: ' + (e.code||e.message)); }
+  renderCfg();
+}
+function renderCfg(){
+  $('cfgGrid').innerHTML = FIELDS.map(([k,n,d,mi,ma,st,def]) => { const v = cur[k]!=null ? cur[k] : def;
+    return '<div class="f"><label>' + n + '</label><div class="mut">' + d + '</div><div class="row"><input type="range" min="' + mi + '" max="' + ma + '" step="' + st + '" value="' + v + '" id="c_' + k + '" oninput="document.getElementById(\'v_' + k + '\').textContent=(+this.value).toLocaleString(\'tr-TR\')"><span class="val" id="v_' + k + '">' + (+v).toLocaleString('tr-TR') + '</span></div></div>'; }).join('');
+}
+async function saveCfg(){
+  const o = Object.assign({}, cur); for (const [k] of FIELDS) o[k] = +$('c_' + k).value;
+  o.updated = Date.now();
+  try { await FB.setDoc(FB.doc(db, 'config', 'live'), o); cur = o; toast('✅ Ayarlar kaydedildi'); } catch(e){ toast('Kaydedilemedi: ' + (e.code||e.message)); }
+}
+function resetCfg(){ for (const [k,,,,,,def] of FIELDS){ $('c_' + k).value = def; $('v_' + k).textContent = def.toLocaleString('tr-TR'); } toast('Varsayılanlar yüklendi, kaydetmeyi unutma.'); }
+function showAnn(){ $('annNow').textContent = cur.ann ? 'Şu an yayında: "' + cur.ann + '"' : 'Şu an yayında duyuru yok.'; $('annType').value = cur.annType || 'info'; }
+async function sendAnn(){
+  const t = $('annText').value.trim(); if (!t) return toast('Duyuru metni yaz.');
+  const o = Object.assign({}, cur, {ann:t, annId:String(Date.now()), annType:$('annType').value, updated:Date.now()});
+  try { await FB.setDoc(FB.doc(db, 'config', 'live'), o); cur = o; $('annText').value = ''; showAnn(); toast('📢 Duyuru yayınlandı'); } catch(e){ toast('Yayınlanamadı: ' + (e.code||e.message)); }
+}
+async function clearAnn(){ const o = Object.assign({}, cur, {ann:'', annId:'', updated:Date.now()}); try { await FB.setDoc(FB.doc(db, 'config', 'live'), o); cur = o; showAnn(); toast('Duyuru kaldırıldı'); } catch(e){ toast('Hata: ' + (e.code||e.message)); } }
+async function sendGift(){
+  const code = $('gCode').value.trim().toUpperCase(), amt = Math.max(0, +$('gAmt').value || 0), msg = $('gMsg').value.trim();
+  if (code.length !== 6) return toast('Kod 6 karakter olmalı.');
+  try {
+    const c = await FB.getDoc(FB.doc(db, 'codes', code)); if (!c.exists()) return toast('Bu kodla oyuncu bulunamadı.');
+    await FB.setDoc(FB.doc(db, 'gifts', c.data().uid), {amount:amt, msg, at:Date.now()});
+    toast('🎁 Hediye gönderildi'); $('gAmt').value = ''; $('gMsg').value = '';
+  } catch(e){ toast('Gönderilemedi: ' + (e.code||e.message)); }
+}
+async function loadReports(){
+  $('repList').textContent = 'Yükleniyor…';
+  try {
+    const s = await FB.getDocs(FB.query(FB.collection(db, 'reports'), FB.orderBy('at','desc'), FB.limit(50)));
+    if (!s.size) return $('repList').innerHTML = '<div class="mut">Şikayet yok 🎉</div>';
+    const rows = [];
+    for (const d of s.docs){ const r = d.data(); let name = r.target; try { const p = await FB.getDoc(FB.doc(db, 'players', r.target)); if (p.exists()) name = p.data().name + ' (' + p.data().code + ')'; } catch(e){}
+      rows.push('<tr><td>' + new Date(r.at).toLocaleString('tr-TR') + '</td><td>' + esc(name) + '</td><td><span class="pill">' + esc(r.reason) + '</span></td><td><button class="btn gh sm" onclick="delRep(\'' + d.id + '\')">Sil</button></td></tr>'); }
+    $('repList').innerHTML = '<table><tr><th>Tarih</th><th>Şikayet edilen</th><th>Sebep</th><th></th></tr>' + rows.join('') + '</table>';
+  } catch(e){ $('repList').textContent = 'Okunamadı: ' + (e.code||e.message); }
+}
+async function delRep(id){ try { await FB.deleteDoc(FB.doc(db, 'reports', id)); loadReports(); } catch(e){ toast('Silinemedi'); } }
+async function loadPlayers(){
+  $('plList').textContent = 'Yükleniyor…';
+  try {
+    const s = await FB.getDocs(FB.query(FB.collection(db, 'players'), FB.orderBy('nw','desc'), FB.limit(50)));
+    $('plList').innerHTML = '<table><tr><th>#</th><th>Firma</th><th>Kod</th><th>Net değer</th><th>Son görülme</th></tr>' + s.docs.map((d,i) => { const p = d.data(); return '<tr><td>' + (i+1) + '</td><td>' + esc(p.name) + '</td><td>' + esc(p.code) + '</td><td>' + fmt(Math.round(p.nw||0)) + '</td><td>' + (p.updated ? new Date(p.updated).toLocaleString('tr-TR') : '-') + '</td></tr>'; }).join('') + '</table>';
+  } catch(e){ $('plList').textContent = 'Okunamadı: ' + (e.code||e.message); }
+}
+</script>
+</body>
+</html>
