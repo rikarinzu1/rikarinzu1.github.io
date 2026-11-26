@@ -103,7 +103,9 @@ const FIELDS = [
   ['bribeRisk','🕵️ Rüşvet soruşturma riski','İhalede rüşvet verenin yakalanma ihtimali çarpanı.',0,3,.1,1],
   ['eventMul','⚡ Arıza ve şikayet sıklığı','Bina olaylarının sıklık çarpanı. 2 = iki kat sık.',.2,4,.1,1],
   ['dailyMul','🎯 Günlük görev ödülü','Günlük görev ödüllerinin çarpanı.',.2,5,.1,1],
-  ['adMul','📺 "Reklam izle, kazan" ödülü','Ödüllü reklam bonusunun çarpanı.',.2,5,.1,1]
+  ['adMul','📺 "Reklam izle, kazan" ödülü','Ödüllü reklam bonusunun çarpanı.',.2,5,.1,1],
+  ['prCapMul','🏅 Reform servet sınırı','1.2 geçişinde dokunulmayacak kasa sınırının çarpanı. 2 = sınır iki katı (daha az para prestije döner).',.25,5,.25,1],
+  ['prRate','🏅 1 prestij puanı kaç ₺','Reformda kaç liranın 1 puana dönüşeceği.',1e8,1e10,1e8,1e9]
 ];
 let cur = {};
 const $ = id => document.getElementById(id);
