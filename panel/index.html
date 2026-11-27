@@ -50,6 +50,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px so
       <button data-t="hediye">🎁 Hediye gönder</button>
       <button data-t="sikayet">⚠️ Şikayetler</button>
       <button data-t="oyuncu">👥 Oyuncular</button>
+      <button data-t="mudahale">🛠️ Hesap müdahalesi</button>
     </div>
 
     <section id="t-ayar">
@@ -84,6 +85,26 @@ table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px so
 
     <section id="t-oyuncu" class="hidden">
       <div class="card"><h2>En zengin 50 oyuncu</h2><div id="plList" style="margin-top:10px">Yükleniyor…</div></div>
+    </section>
+    <section id="t-mudahale" class="hidden">
+      <div class="card"><h2>Hesap müdahalesi</h2><div class="mut">Hile ya da açıkla para kazanan bir hesabı düzelt. Oyuncu oyunu internete bağlı açtığında uygulanır, sonra sıralamadaki değeri de düzelir. Yalnızca 1.2 ve sonrası sürümlerde çalışır.</div>
+        <div class="row" style="display:flex;gap:8px;margin-top:10px"><input id="mCode" maxlength="6" placeholder="Arkadaş kodu (ör. PCN7PF)" style="text-transform:uppercase"><button class="btn" onclick="mFind()">Bul</button></div>
+        <div id="mInfo" class="mut" style="margin-top:10px"></div>
+        <div id="mForm" class="hidden" style="margin-top:12px">
+          <div class="f"><label><input type="radio" name="mMode" value="fix" checked style="width:auto"> Düzelt</label>
+            <div class="mut">Kasayı aşağıdaki tutara indirir. İstersen hisselerini ve prestijini de siler. Binaları ve arsaları kalır.</div>
+            <div class="row"><input id="mCash" type="number" placeholder="Yeni kasa (₺), ör. 50000000"></div>
+            <label style="font-weight:400;margin-top:8px"><input id="mPort" type="checkbox" checked style="width:auto"> Borsa hisselerini sil</label>
+            <label style="font-weight:400"><input id="mPres" type="checkbox" checked style="width:auto"> Prestij puanlarını sıfırla</label>
+          </div>
+          <div class="f" style="margin-top:8px"><label><input type="radio" name="mMode" value="reset" style="width:auto"> Sıfırdan başlat</label>
+            <div class="mut">Bütün ilerleme silinir, oyuncu 30 Mn ₺ ile baştan başlar. Firma adı, arkadaş kodu ve arkadaşları kalır. Geri alınamaz.</div>
+          </div>
+          <input id="mMsg" style="margin-top:8px" placeholder="Oyuncuya mesaj (boş bırakılırsa hazır uyarı gösterilir)">
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="btn gh" onclick="mCancel()">İptal et</button><button class="btn" onclick="mSend()">🛠️ Uygula</button></div>
+          <div id="mPend" class="mut" style="margin-top:8px"></div>
+        </div>
+      </div>
     </section>
   </div>
 </main>
@@ -121,6 +142,7 @@ const FIELDS = [
   ['adMul','rek','📺 "Reklam izle, kazan" ödülü','Ödüllü reklam bonusu çarpanı.',.2,5,.1,1,'İnşaat hızı bonusu ve kaynak şansı süresi/oranı bu çarpanla uzar. 2 = bonus iki kat güçlü ya da uzun. Reklam geliri için oyuncuyu daha çok izletmek istiyorsan yükselt.'],
   ['prCapMul','pres','🏅 Reform servet sınırı','Reformda kasada kalacak servet sınırı.',.25,5,.25,1,'Oyun 1.2 ilk açıldığında ofis seviyesine göre bir kasa sınırı var, fazlası prestij puanına çevrilir. 2 = sınır iki katı (daha az para puana döner), 0,5 = sınır yarı. Zaten reformdan geçen oyuncular bundan etkilenmez, sadece henüz 1.2’ye geçmemiş olanlar.'],
   ['prRate','pres','🏅 1 prestij puanı kaç ₺','Reformda ve satın almada baz fiyat.',1e8,1e10,1e8,1e9,'Reformda fazla paranın kaç lirasının 1 puana döneceği. Aynı değer "Paranı prestije dönüştür"deki fiyatın tabanıdır (servetin %1’i ile bunun büyüğü alınır). Yükseltirsen puan kazanmak zorlaşır.'],
+  ['prReformMax','pres','🏅 Reformda en fazla prestij','Reformda tek oyuncunun alabileceği en yüksek puan.',10,400,10,100,'Çok zengin hesapların (açıktan para kazananlar dahil) reformda binlerce puan alıp hemen Elmas rozete çıkmasını engeller. 100 puan Altın rozete denk gelir. Elmas 400 puandan başlar.'],
   ['prBuyMul','pres','💰 Prestij satın alma fiyatı','Paradan prestij fiyat çarpanı.',.2,5,.1,1,'Oyun içinde para verip prestij puanı alma fiyatını çarpar. Aldıkça fiyat zaten %12 artıyor. 2 yaparsan her puan iki kat pahalı. Zenginlerin parasını çekmek için düşük tut, prestijin değerini korumak için yükselt.']
 ];
 let cur = {};
@@ -193,9 +215,46 @@ async function loadPlayers(){
   $('plList').textContent = 'Yükleniyor…';
   try {
     const s = await FB.getDocs(FB.query(FB.collection(db, 'players'), FB.orderBy('nw','desc'), FB.limit(50)));
-    $('plList').innerHTML = '<table><tr><th>#</th><th>Firma</th><th>Kod</th><th>Net değer</th><th>Son görülme</th></tr>' + s.docs.map((d,i) => { const p = d.data(); return '<tr><td>' + (i+1) + '</td><td>' + esc(p.name) + '</td><td>' + esc(p.code) + '</td><td>' + fmt(Math.round(p.nw||0)) + '</td><td>' + (p.updated ? new Date(p.updated).toLocaleString('tr-TR') : '-') + '</td></tr>'; }).join('') + '</table>';
+    $('plList').innerHTML = '<table><tr><th>#</th><th>Firma</th><th>Kod</th><th>Net değer</th><th>Son görülme</th></tr>' + s.docs.map((d,i) => { const p = d.data(); return '<tr><td>' + (i+1) + '</td><td>' + esc(p.name) + '</td><td>' + esc(p.code) + '</td><td>' + fmt(Math.round(p.nw||0)) + '</td><td>' + (p.updated ? new Date(p.updated).toLocaleString('tr-TR') : '-') + '</td><td><button class="btn gh sm" onclick="mGo(\'' + esc(p.code) + '\')">Müdahale</button></td></tr>'; }).join('') + '</table>';
   } catch(e){ $('plList').textContent = 'Okunamadı: ' + (e.code||e.message); }
 }
+
+let mUid = null, mName = '';
+async function mFind(){
+  const code = $('mCode').value.trim().toUpperCase(); $('mForm').classList.add('hidden'); mUid = null;
+  if (code.length !== 6) return toast('Kod 6 karakter olmalı.');
+  $('mInfo').textContent = 'Aranıyor…';
+  try {
+    const c = await FB.getDoc(FB.doc(db, 'codes', code)); if (!c.exists()) return $('mInfo').textContent = 'Bu kodla oyuncu bulunamadı.';
+    mUid = c.data().uid; const p = await FB.getDoc(FB.doc(db, 'players', mUid)), d = p.exists() ? p.data() : {};
+    mName = d.name || code;
+    $('mInfo').innerHTML = '<b>' + esc(mName) + '</b> · ' + esc(code) + '<br>Net değer: <b>' + fmt(Math.round(d.nw||0)) + '</b> · Seviye ' + (d.lvl|0) + ' · Son görülme: ' + (d.updated ? new Date(d.updated).toLocaleString('tr-TR') : '-');
+    $('mForm').classList.remove('hidden'); mPending();
+  } catch(e){ $('mInfo').textContent = 'Okunamadı: ' + (e.code||e.message); }
+}
+async function mPending(){
+  try { const g = await FB.getDoc(FB.doc(db, 'gifts', mUid)); const d = g.exists() ? g.data() : null;
+    $('mPend').innerHTML = d && d.adm ? '⏳ Bekleyen müdahale var (' + (d.adm==='reset' ? 'sıfırdan başlat' : 'düzelt') + ', ' + new Date(d.at).toLocaleString('tr-TR') + '). Oyuncu oyunu açınca uygulanacak.' : '';
+  } catch(e){}
+}
+async function mSend(){
+  if (!mUid) return;
+  const mode = document.querySelector('input[name=mMode]:checked').value, msg = $('mMsg').value.trim();
+  const doc = {adm:mode, msg, at:Date.now(), amount:0};
+  if (mode === 'fix'){
+    const v = $('mCash').value.trim(); if (v === '' || isNaN(+v) || +v < 0) return toast('Yeni kasa tutarını yaz.');
+    doc.setCash = Math.round(+v); doc.clearPort = $('mPort').checked; doc.clearPrestige = $('mPres').checked;
+    if (!confirm(mName + ' hesabının kasası ' + fmt(doc.setCash) + ' yapılacak. Onaylıyor musun?')) return;
+  } else if (!confirm(mName + ' hesabı SIFIRDAN başlatılacak. Bütün ilerlemesi silinecek. Emin misin?')) return;
+  try { await FB.setDoc(FB.doc(db, 'gifts', mUid), doc); toast('🛠️ Müdahale kaydedildi'); mPending(); }
+  catch(e){ toast('Kaydedilemedi: ' + (e.code||e.message)); }
+}
+async function mCancel(){
+  if (!mUid) return;
+  try { const g = await FB.getDoc(FB.doc(db, 'gifts', mUid)); if (g.exists() && g.data().adm){ await FB.deleteDoc(FB.doc(db, 'gifts', mUid)); toast('Bekleyen müdahale iptal edildi'); } else toast('Bekleyen müdahale yok'); mPending(); }
+  catch(e){ toast('İptal edilemedi: ' + (e.code||e.message)); }
+}
+function mGo(code){ document.querySelector('.tabs button[data-t=mudahale]').click(); $('mCode').value = code; mFind(); }
 </script>
 </body>
 </html>
